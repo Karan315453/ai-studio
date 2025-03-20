@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create stunning AI-generated images with a modern, intuitive interface.">
+    <meta name="keywords" content="AI image generation, photo to AI, text to image, realistic AI images">
+    <meta name="author" content="Your Name">
+    <title>AI Image Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- AdSense Script (Replace with your actual AdSense code) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+            crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .top-ad {
+            width: 100%;
+            background: #252525;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .top-ad ins {
+            display: inline-block;
+            width: 728px;
+            height: 90px;
+        }
+
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #252525;
+            padding: 20px;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 1.8em;
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .tab-btn {
+            padding: 12px;
+            background: #333;
+            border: none;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .tab-btn:hover {
+            background: #444;
+        }
+
+        .sidebar .tab-btn.active {
+            background: #00aaff;
+            color: #fff;
+        }
+
+        .sidebar .settings {
+            margin-top: 20px;
+        }
+
+        .sidebar .settings h3 {
+            font-size: 1.2em;
+            color: #00aaff;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .ad-space {
+            background: #333;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .sidebar .ad-space ins {
+            display: inline-block;
+            width: 250px;
+            height: 250px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .prompt-examples {
+            background: #252525;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .prompt-examples h2 {
+            font-size: 1.6em;
+            color: #00aaff;
+            margin-bottom: 20px;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .example-item {
+            background: #333;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .example-item:hover {
+            transform: scale(1.05);
+        }
+
+        .example-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .example-item p {
+            font-size: 0.9em;
+            color: #e0e0e0;
+        }
+
+        .tab-content {
+            display: none;
+            background: #252525;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            color: #00aaff;
+            margin-bottom: 20px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #00aaff;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .resolution-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .resolution-btn {
+            padding: 8px 15px;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .resolution-btn:hover {
+            background: #444;
+        }
+
+        .resolution-btn.active {
+            background: #00aaff;
+            border-color: #00aaff;
+            color: #fff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #00aaff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #0088cc;
+        }
+
+        .preview-btn {
+            background: #ffaa00;
+        }
+
+        .preview-btn:hover {
+            background: #cc8800;
+        }
+
+        .random-prompt-btn {
+            background: #ff5555;
+        }
+
+        .random-prompt-btn:hover {
+            background: #cc4444;
+        }
+
+        #preview-explanation {
+            margin-top: 15px;
+            font-size: 1em;
+            color: #e0e0e0;
+            background: #333;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ffaa00;
+            display: none;
+        }
+
+        #output {
+            background: #252525;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        #output h3 {
+            font-size: 1.5em;
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+
+        .image-container {
+            background: #333;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #generated-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            transition: opacity 0.3s ease;
+        }
+
+        #image-explanation {
+            margin-top: 15px;
+            font-size: 1em;
+            color: #e0e0e0;
+            background: #333;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #00aaff;
+        }
+
+        .edit-controls {
+            margin-top: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .edit-controls label {
+            font-size: 0.9em;
+            color: #e0e0e0;
+        }
+
+        .edit-controls input[type="range"] {
+            width: 100%;
+        }
+
+        .export-options {
+            display: none;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .export-btn {
+            background: #00cc66;
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        .export-btn:hover {
+            background: #009944;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid #00aaff;
+            border-top: 5px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .history {
+            background: #252525;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .history h3 {
+            font-size: 1.5em;
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+
+        #history-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #history-list li {
+            padding: 10px;
+            background: #333;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        #history-list li:hover {
+            background: #444;
+        }
+
+        #history-list li img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .bottom-ad {
+            width: 100%;
+            background: #252525;
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+
+        .bottom-ad ins {
+            display: inline-block;
+            width: 728px;
+            height: 90px;
+        }
+
+        footer {
+            padding: 10px;
+            text-align: center;
+            background: #252525;
+            border-top: 1px solid #333;
+            color: #999;
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #333;
+            }
+            .example-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-ad ins, .bottom-ad ins {
+                width: 100%;
+                height: 60px;
+            }
+            .sidebar .ad-space ins {
+                width: 100%;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-ad">
+        <!-- AdSense Top Banner -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <div class="app-container">
+        <div class="sidebar">
+            <h1>AI Image Studio</h1>
+            <button class="tab-btn active" onclick="openTab('photo-to-ai')">Photo to AI</button>
+            <button class="tab-btn" onclick="openTab('prompt-to-ai')">Prompt to AI</button>
+            <button class="tab-btn" onclick="openTab('text-to-image')">Text to Image</button>
+            <div class="settings">
+                <h3>Settings</h3>
+                <select id="theme">
+                    <option value="dark">Dark Theme</option>
+                    <option value="light">Light Theme</option>
+                </select>
+                <input type="text" id="api-key" placeholder="Enter API Key">
+                <label for="quality">Quality:</label>
+                <input type="range" id="quality" min="1" max="100" value="75">
+            </div>
+            <div class="ad-space">
+                <!-- AdSense Sidebar Ad -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:250px;height:250px"
+                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="prompt-examples">
+                <h2>Prompt Examples</h2>
+                <div class="example-grid">
+                    <div class="example-item" onclick="useExamplePrompt('A cyberpunk cityscape at night, neon lights, 4K')">
+                        <img src="https://via.placeholder.com/200x120?text=Cyberpunk+City" alt="Cyberpunk City">
+                        <p>A cyberpunk cityscape at night, neon lights, 4K</p>
+                    </div>
+                    <div class="example-item" onclick="useExamplePrompt('A majestic dragon flying over mountains, epic fantasy')">
+                        <img src="https://via.placeholder.com/200x120?text=Dragon+Fantasy" alt="Dragon Fantasy">
+                        <p>A majestic dragon flying over mountains, epic fantasy</p>
+                    </div>
+                    <div class="example-item" onclick="useExamplePrompt('A serene beach at sunset, watercolor style')">
+                        <img src="https://via.placeholder.com/200x120?text=Beach+Sunset" alt="Beach Sunset">
+                        <p>A serene beach at sunset, watercolor style</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="photo-to-ai" class="tab-content active">
+                <h2>Photo to AI</h2>
+                <input type="file" id="photo-upload" accept="image/*">
+                <select id="photo-style">
+                    <option value="realistic">Realistic</option>
+                    <option value="animated">Animated</option>
+                </select>
+                <select id="photo-compression">
+                    <option value="low">Low (High Quality)</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High (Low Quality)</option>
+                </select>
+                <div class="resolution-buttons">
+                    <button class="resolution-btn" onclick="selectResolution('cinematic', this)">Cinematic (21:9)</button>
+                    <button class="resolution-btn" onclick="selectResolution('reels', this)">Reels (9:16)</button>
+                    <button class="resolution-btn active" onclick="selectResolution('youtube', this)">YouTube (16:9)</button>
+                </div>
+                <button class="preview-btn" onclick="previewExplanation()">Preview Explanation</button>
+                <p id="preview-explanation"></p>
+                <button onclick="generatePhotoToAI()">Generate Image</button>
+            </div>
+
+            <div id="prompt-to-ai" class="tab-content">
+                <h2>Prompt to AI</h2>
+                <input type="text" id="prompt-input" placeholder="e.g., 'A futuristic city at sunset'">
+                <button class="random-prompt-btn" onclick="generateRandomPrompt()">Random Prompt</button>
+                <select id="prompt-compression">
+                    <option value="low">Low (High Quality)</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High (Low Quality)</option>
+                </select>
+                <div class="resolution-buttons">
+                    <button class="resolution-btn" onclick="selectResolution('cinematic', this)">Cinematic (21:9)</button>
+                    <button class="resolution-btn" onclick="selectResolution('reels', this)">Reels (9:16)</button>
+                    <button class="resolution-btn active" onclick="selectResolution('youtube', this)">YouTube (16:9)</button>
+                </div>
+                <button onclick="generatePromptToAI()">Generate Image</button>
+            </div>
+
+            <div id="text-to-image" class="tab-content">
+                <h2>Text to Image</h2>
+                <textarea id="text-input" rows="5" placeholder="e.g., 'A cinematic warrior in a futuristic battlefield, 4K'"></textarea>
+                <button class="random-prompt-btn" onclick="generateRandomPrompt()">Random Prompt</button>
+                <select id="text-compression">
+                    <option value="low">Low (High Quality)</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High (Low Quality)</option>
+                </select>
+                <div class="resolution-buttons">
+                    <button class="resolution-btn" onclick="selectResolution('cinematic', this)">Cinematic (21:9)</button>
+                    <button class="resolution-btn" onclick="selectResolution('reels', this)">Reels (9:16)</button>
+                    <button class="resolution-btn active" onclick="selectResolution('youtube', this)">YouTube (16:9)</button>
+                </div>
+                <button onclick="generateTextToImage()">Generate Image</button>
+            </div>
+
+            <div id="output">
+                <h3>Generated Image</h3>
+                <div class="image-container">
+                    <img id="generated-image" src="" alt="Generated AI Image" style="display: none;">
+                </div>
+                <div class="loading" id="loading"></div>
+                <p id="image-explanation" style="display: none;"></p>
+                <div class="edit-controls" id="edit-controls">
+                    <label for="brightness">Brightness:</label>
+                    <input type="range" id="brightness" min="-100" max="100" value="0">
+                    <label for="contrast">Contrast:</label>
+                    <input type="range" id="contrast" min="-100" max="100" value="0">
+                    <label for="saturation">Saturation:</label>
+                    <input type="range" id="saturation" min="-100" max="100" value="0">
+                </div>
+                <div class="export-options" id="export-options">
+                    <button class="export-btn" onclick="downloadImage('jpg')">Download JPG</button>
+                    <button class="export-btn" onclick="downloadImage('png')">Download PNG</button>
+                    <button class="export-btn" onclick="downloadImage('webp')">Download WEBP</button>
+                </div>
+            </div>
+
+            <div class="history">
+                <h3>Generation History</h3>
+                <ul id="history-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-ad">
+        <!-- AdSense Bottom Banner -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <footer>
+        <p>© 2025 AI Image Studio. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let currentImageUrl = '';
+        let selectedResolution = 'youtube';
+        let history = [];
+
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+
+        function selectResolution(resolution, button) {
+            selectedResolution = resolution;
+            document.querySelectorAll('.resolution-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        }
+
+        function previewExplanation() {
+            const file = document.getElementById('photo-upload').files[0];
+            const style = document.getElementById('photo-style').value;
+            const compression = document.getElementById('photo-compression').value;
+
+            if (!file) {
+                alert('Please upload a photo to preview the explanation!');
+                return;
+            }
+
+            let explanation = '';
+            if (style === 'realistic') {
+                explanation = `Your photo will be transformed into a highly detailed, lifelike image with realistic textures, lighting, and depth, optimized for ${selectedResolution} (${getResolutionText(selectedResolution)}) with ${compression} compression.`;
+            } else if (style === 'animated') {
+                explanation = `Your photo will be converted into a vibrant, cartoon-like image with bold colors and smooth, stylized features, optimized for ${selectedResolution} (${getResolutionText(selectedResolution)}) with ${compression} compression.`;
+            }
+
+            const previewEl = document.getElementById('preview-explanation');
+            previewEl.textContent = explanation;
+            previewEl.style.display = 'block';
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        async function generatePhotoToAI() {
+            const file = document.getElementById('photo-upload').files[0];
+            const style = document.getElementById('photo-style').value;
+            const compression = document.getElementById('photo-compression').value;
+
+            if (!file) {
+                alert('Please upload a photo!');
+                return;
+            }
+
+            showLoading(true);
+            const formData = new FormData();
+            formData.append('photo', file);
+            formData.append('style', style);
+            formData.append('compression', compression);
+            formData.append('resolution', selectedResolution);
+
+            try {
+                const response = await fetch('http://localhost:3000/generate/photo-to-ai', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                let explanation = '';
+                if (style === 'realistic') {
+                    explanation = `Your photo has been transformed into a highly detailed, lifelike image with realistic textures, lighting, and depth, optimized for ${selectedResolution} (${getResolutionText(selectedResolution)}) with ${compression} compression.`;
+                } else if (style === 'animated') {
+                    explanation = `Your photo has been converted into a vibrant, cartoon-like image with bold colors and smooth, stylized features, optimized for ${selectedResolution} (${getResolutionText(selectedResolution)}) with ${compression} compression.`;
+                }
+
+                displayImage(data.imageUrl, explanation);
+                addToHistory(`Photo to AI: ${style} style`, data.imageUrl);
+            } catch (error) {
+                console.error('Photo to AI Error:', error);
+                alert('Error generating image: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function generatePromptToAI() {
+            const prompt = document.getElementById('prompt-input').value;
+            const compression = document.getElementById('prompt-compression').value;
+
+            if (!prompt) {
+                alert('Please enter a prompt!');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const response = await fetch('http://localhost:3000/generate/prompt-to-ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, compression, resolution: selectedResolution })
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                const explanation = `Generated from prompt "${prompt}" with ${compression} compression, formatted for ${selectedResolution} (${getResolutionText(selectedResolution)}).`;
+                displayImage(data.imageUrl, explanation);
+                addToHistory(`Prompt: ${prompt.substring(0, 30)}...`, data.imageUrl);
+            } catch (error) {
+                console.error('Prompt to AI Error:', error);
+                alert('Error generating image: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function generateTextToImage() {
+            const text = document.getElementById('text-input').value;
+            const compression = document.getElementById('text-compression').value;
+
+            if (!text) {
+                alert('Please enter a description!');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const response = await fetch('http://localhost:3000/generate/text-to-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, compression, resolution: selectedResolution })
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                const explanation = `Generated from description "${text}" with ${compression} compression, formatted for ${selectedResolution} (${getResolutionText(selectedResolution)}).`;
+                displayImage(data.imageUrl, explanation);
+                addToHistory(`Text: ${text.substring(0, 30)}...`, data.imageUrl);
+            } catch (error) {
+                console.error('Text to Image Error:', error);
+                alert('Error generating image: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayImage(src, explanation) {
+            const img = document.getElementById('generated-image');
+            const editControls = document.getElementById('edit-controls');
+            const exportOptions = document.getElementById('export-options');
+            const explanationEl = document.getElementById('image-explanation');
+            img.src = src;
+            img.style.display = 'block';
+            editControls.style.display = 'flex';
+            exportOptions.style.display = 'flex';
+            explanationEl.textContent = explanation;
+            explanationEl.style.display = 'block';
+            currentImageUrl = src;
+            applyImageEdits(); // Initial render with default values
+        }
+
+        function applyImageEdits() {
+            const img = document.getElementById('generated-image');
+            const brightness = document.getElementById('brightness').value;
+            const contrast = document.getElementById('contrast').value;
+            const saturation = document.getElementById('saturation').value;
+            img.style.filter = `brightness(${100 + parseInt(brightness)}%) contrast(${100 + parseInt(contrast)}%) saturate(${100 + parseInt(saturation)}%)`;
+        }
+
+        function downloadImage(format) {
+            if (!currentImageUrl) {
+                alert('No image to download!');
+                return;
+            }
+            const link = document.createElement('a');
+            link.href = currentImageUrl;
+            link.download = `generated-image-${selectedResolution}.${format}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function addToHistory(entry, imageUrl) {
+            history.unshift({ text: entry, image: imageUrl });
+            if (history.length > 10) history.pop();
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const li = document.createElement('li');
+                const img = document.createElement('img');
+                img.src = item.image;
+                li.appendChild(img);
+                li.appendChild(document.createTextNode(item.text));
+                li.onclick = () => displayImage(item.image, item.text);
+                historyList.appendChild(li);
+            });
+        }
+
+        function getResolutionText(resolution) {
+            switch (resolution) {
+                case 'cinematic': return '21:9, e.g., 2560x1080';
+                case 'reels': return '9:16, e.g., 1080x1920';
+                case 'youtube': return '16:9, e.g., 1920x1080';
+                default: return '16:9, e.g., 1920x1080';
+            }
+        }
+
+        function useExamplePrompt(prompt) {
+            document.getElementById('prompt-input').value = prompt;
+            document.getElementById('text-input').value = prompt;
+            openTab('prompt-to-ai');
+        }
+
+        function generateRandomPrompt() {
+            const prompts = [
+                "A steampunk airship over a Victorian city",
+                "A glowing forest with bioluminescent plants",
+                "An astronaut exploring a neon-lit alien planet",
+                "A medieval knight in a futuristic battlefield",
+                "A surreal dreamscape with floating islands"
+            ];
+            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            document.getElementById('prompt-input').value = randomPrompt;
+            document.getElementById('text-input').value = randomPrompt;
+        }
+
+        // Theme Switcher
+        document.getElementById('theme').addEventListener('change', (e) => {
+            const theme = e.target.value;
+            if (theme === 'light') {
+                document.body.style.background = '#f0f0f0';
+                document.querySelector('.main-content').style.background = '#ffffff';
+                document.querySelectorAll('.tab-content, .sidebar, .history, #output, .prompt-examples').forEach(el => {
+                    el.style.background = '#e0e0e0';
+                    el.style.color = '#333';
+                });
+                document.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.style.background = '#fff';
+                    el.style.color = '#333';
+                });
+            } else {
+                document.body.style.background = '#1a1a1a';
+                document.querySelector('.main-content').style.background = '#1e1e1e';
+                document.querySelectorAll('.tab-content, .sidebar, .history, #output, .prompt-examples').forEach(el => {
+                    el.style.background = '#252525';
+                    el.style.color = '#e0e0e0';
+                });
+                document.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.style.background = '#333';
+                    el.style.color = '#e0e0e0';
+                });
+            }
+        });
+
+        // Edit Controls Listeners
+        ['brightness', 'contrast', 'saturation'].forEach(id => {
+            document.getElementById(id).addEventListener('input', applyImageEdits);
+        });
+    </script>
+</body>
+</html>
